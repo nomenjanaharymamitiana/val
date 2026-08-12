@@ -26,6 +26,7 @@
       justify-content: center;
       font-family: 'Fredoka One', cursive;
       overflow: hidden;
+      position: relative;
     }
 
     /* Animation du fond dégradé */
@@ -35,8 +36,52 @@
       100% { background-position: 0% 50%; }
     }
 
+    /* --- PLUIE DE PETITES TÊTES EN ARRIÈRE-PLAN --- */
+    .floating-heads-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .bg-head {
+      position: absolute;
+      bottom: -100px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      animation: floatUp 6s linear infinite;
+      opacity: 0.85;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-110vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
     /* --- CARTE PRINCIPALE --- */
     .card {
+      position: relative;
+      z-index: 10;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 35px;
       padding: 40px 30px;
@@ -81,24 +126,33 @@
       to { transform: scale(1.1) rotate(2deg); }
     }
 
-    /* --- EMOJI ET ANIMATION --- */
-    .icon-box {
-      font-size: 5rem;
+    /* --- IMAGE PRINCIPALE DU VISAGE --- */
+    .head-container {
       margin: 15px 0;
       display: inline-block;
+      position: relative;
+    }
+
+    .main-head {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid #ff007f;
+      box-shadow: 0 10px 25px rgba(255, 0, 127, 0.5);
       cursor: pointer;
-      transition: transform 0.2s;
-      animation: wiggle 2s infinite;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: headBounce 2s infinite ease-in-out;
     }
 
-    .icon-box:hover {
-      transform: scale(1.3) rotate(15deg);
+    .main-head:hover {
+      transform: scale(1.2) rotate(10deg);
+      border-color: #00dfd8;
     }
 
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(-10deg); }
-      75% { transform: rotate(10deg); }
+    @keyframes headBounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
     }
 
     p.subtitle {
@@ -128,28 +182,46 @@
       box-shadow: 0 2px 0 #000;
     }
 
-    /* --- EFFET CONFETTI DU CLIC --- */
-    .sparkle {
-      position: absolute;
+    /* --- PETITES TÊTES VOLANTES SUR CLIC --- */
+    .flying-head {
+      position: fixed;
       pointer-events: none;
-      font-size: 1.5rem;
-      animation: floatUp 1s ease-out forwards;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ff007f;
+      z-index: 100;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      animation: headFlyUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     }
 
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(1.8); }
+    @keyframes headFlyUp {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(0.6) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(1.5) rotate(360deg);
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- Conteneur pour les têtes volantes en arrière-plan -->
+  <div class="floating-heads-container" id="bgHeads"></div>
+
   <div class="card" id="card">
     <div class="title-hano">HANO TAY!</div>
     <div class="title-valisoa">VALISOA</div>
     
-    <div>
-      <span class="icon-box" id="emoji">👏</span>
+    <div class="head-container">
+      <img src="cUjx7MAn.jpeg" alt="Valisoa" class="main-head" id="mainHead" onclick="clicHanoTay(event)">
     </div>
 
     <p class="subtitle">MANDANSA / ALEFAAAAA ! 🚀</p>
@@ -158,40 +230,65 @@
   </div>
 
   <script>
+    const imageName = "cUjx7MAn.jpeg";
+
+    // --- GENERER LA PLUIE DE PETITES TETES EN ARRIERE-PLAN ---
+    const bgContainer = document.getElementById('bgHeads');
+    const totalBgHeads = 20;
+
+    for (let i = 0; i < totalBgHeads; i++) {
+      const head = document.createElement('img');
+      head.src = imageName;
+      head.className = 'bg-head';
+      
+      const size = Math.floor(Math.random() * 35) + 30; // 30px à 65px
+      const left = Math.random() * 100; // 0% à 100%
+      const duration = Math.random() * 4 + 4; // 4s à 8s
+      const delay = Math.random() * 5; // 0s à 5s
+
+      head.style.width = size + 'px';
+      head.style.height = size + 'px';
+      head.style.left = left + 'vw';
+      head.style.animationDuration = duration + 's';
+      head.style.animationDelay = delay + 's';
+
+      bgContainer.appendChild(head);
+    }
+
+    // --- ANIMATION D'EXPLOSION DE TÊTES AU CLIC ---
     function clicHanoTay(event) {
-      const card = document.getElementById('card');
-      const emoji = document.getElementById('emoji');
+      const mainHead = document.getElementById('mainHead');
 
-      // Secousse de la carte
-      card.style.animation = 'none';
+      // Effet d'impulsion sur la tête principale
+      mainHead.style.transform = 'scale(1.4) rotate(15deg)';
       setTimeout(() => {
-        card.style.animation = 'popIn 0.3s ease;';
-      }, 10);
+        mainHead.style.transform = '';
+      }, 200);
 
-      // Changement temporaire de l'émoji
-      const emojis = ['🔥', '🎉', '⚡', '🥳', '🚀', '👏'];
-      emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      // Coordonnées du clic
+      const rect = event.target.getBoundingClientRect();
+      const originX = event.clientX || (rect.left + rect.width / 2);
+      const originY = event.clientY || (rect.top + rect.height / 2);
 
-      // Effet de particules/émojis qui s'envolent autour du clic
-      for (let i = 0; i < 8; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        sparkle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-        
-        // Position autour du bouton
-        sparkle.style.left = event.clientX + 'px';
-        sparkle.style.top = event.clientY + 'px';
+      // Générer plein de petites têtes qui s'envolent
+      const count = 15;
+      for (let i = 0; i < count; i++) {
+        const flyingHead = document.createElement('img');
+        flyingHead.src = imageName;
+        flyingHead.className = 'flying-head';
 
-        // Direction aléatoire
-        const x = (Math.random() - 0.5) * 200 + 'px';
-        const y = (Math.random() - 0.5) * 200 + 'px';
-        sparkle.style.setProperty('--x', x);
-        sparkle.style.setProperty('--y', y);
+        flyingHead.style.left = (originX - 22) + 'px';
+        flyingHead.style.top = (originY - 22) + 'px';
 
-        document.body.appendChild(sparkle);
+        const xDir = (Math.random() - 0.5) * 350;
+        const yDir = -(Math.random() * 300 + 150);
 
-        // Nettoyage après l'animation
-        setTimeout(() => sparkle.remove(), 1000);
+        flyingHead.style.setProperty('--x', xDir + 'px');
+        flyingHead.style.setProperty('--y', yDir + 'px');
+
+        document.body.appendChild(flyingHead);
+
+        setTimeout(() => flyingHead.remove(), 1200);
       }
     }
   </script>
