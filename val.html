@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔥 Hano Tay Valisoa ! 🔥</title>
+
+  <!-- Police Pop / BD -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff007f, #7928ca, #00dfd8);
+      background-size: 400% 400%;
+      animation: gradientBG 8s ease infinite;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fredoka One', cursive;
+      overflow: hidden;
+    }
+
+    /* Animation du fond dégradé */
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* --- CARTE PRINCIPALE --- */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 35px;
+      padding: 40px 30px;
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      transform: scale(0.8);
+      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes popIn {
+      to { transform: scale(1); }
+    }
+
+    /* --- TEXTE "HANO TAY" --- */
+    .title-hano {
+      font-size: 3.5rem;
+      color: #ff007f;
+      text-shadow: 3px 3px 0px #000;
+      letter-spacing: 2px;
+      animation: bounce 1.2s infinite alternate ease-in-out;
+    }
+
+    /* --- TEXTE "VALISOA" --- */
+    .title-valisoa {
+      font-size: 4rem;
+      color: #00dfd8;
+      text-shadow: 4px 4px 0px #000;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: pulseText 0.6s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
+    }
+
+    @keyframes pulseText {
+      from { transform: scale(1) rotate(-2deg); }
+      to { transform: scale(1.1) rotate(2deg); }
+    }
+
+    /* --- EMOJI ET ANIMATION --- */
+    .icon-box {
+      font-size: 5rem;
+      margin: 15px 0;
+      display: inline-block;
+      cursor: pointer;
+      transition: transform 0.2s;
+      animation: wiggle 2s infinite;
+    }
+
+    .icon-box:hover {
+      transform: scale(1.3) rotate(15deg);
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-10deg); }
+      75% { transform: rotate(10deg); }
+    }
+
+    p.subtitle {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      color: #333;
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+    }
+
+    /* --- BOUTON INTERACTIF --- */
+    .btn-action {
+      background: #ff007f;
+      color: white;
+      border: 4px solid #000;
+      padding: 15px 35px;
+      font-size: 1.5rem;
+      font-family: 'Fredoka One', cursive;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #000;
+      transition: all 0.1s ease;
+    }
+
+    .btn-action:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #000;
+    }
+
+    /* --- EFFET CONFETTI DU CLIC --- */
+    .sparkle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.5rem;
+      animation: floatUp 1s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(1.8); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card">
+    <div class="title-hano">HANO TAY!</div>
+    <div class="title-valisoa">VALISOA</div>
+    
+    <div>
+      <span class="icon-box" id="emoji">👏</span>
+    </div>
+
+    <p class="subtitle">MANDANSA / ALEFAAAAA ! 🚀</p>
+
+    <button class="btn-action" onclick="clicHanoTay(event)">HANO TAY ! 🔥</button>
+  </div>
+
+  <script>
+    function clicHanoTay(event) {
+      const card = document.getElementById('card');
+      const emoji = document.getElementById('emoji');
+
+      // Secousse de la carte
+      card.style.animation = 'none';
+      setTimeout(() => {
+        card.style.animation = 'popIn 0.3s ease;';
+      }, 10);
+
+      // Changement temporaire de l'émoji
+      const emojis = ['🔥', '🎉', '⚡', '🥳', '🚀', '👏'];
+      emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+      // Effet de particules/émojis qui s'envolent autour du clic
+      for (let i = 0; i < 8; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        // Position autour du bouton
+        sparkle.style.left = event.clientX + 'px';
+        sparkle.style.top = event.clientY + 'px';
+
+        // Direction aléatoire
+        const x = (Math.random() - 0.5) * 200 + 'px';
+        const y = (Math.random() - 0.5) * 200 + 'px';
+        sparkle.style.setProperty('--x', x);
+        sparkle.style.setProperty('--y', y);
+
+        document.body.appendChild(sparkle);
+
+        // Nettoyage après l'animation
+        setTimeout(() => sparkle.remove(), 1000);
+      }
+    }
+  </script>
+
+</body>
+</html>
